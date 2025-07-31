@@ -1,0 +1,14 @@
+{
+    "name": "@user-weather/shared",
+    "version": "1.0.0",
+    "description": "Shared types and utilities for user-weather application",
+    "scripts": {
+      "build": "tsup",
+      "clean": "rm -rf dist"
+    },
+    "devDependencies": {
+      "tsup": "^8.0.1",
+      "typescript": "^5.3.3"
+    }
+  }
+  

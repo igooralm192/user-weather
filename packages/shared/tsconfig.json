@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "composite": true,               // Required for project references
+      "declaration": true,
+      "declarationMap": true,
+      "outDir": "dist",
+      "rootDir": "src",
+      "module": "ESNext",
+      "target": "ESNext",
+      "moduleResolution": "Node",
+      "strict": true,
+      "esModuleInterop": true
+    },
+    "include": ["src"]
+  }

@@ -1,0 +1,22 @@
+{
+    "name": "user-weather-monorepo",
+    "version": "0.0.1",
+    "description": "User Weather CRUD application with Node.js API and React frontend",
+    "private": true,
+    "scripts": {
+        "dev": "concurrently \"pnpm --filter api dev\" \"pnpm --filter frontend dev\"",
+        "build": "pnpm --filter shared build && pnpm --filter api build && pnpm --filter frontend build",
+        "test": "pnpm --filter shared test && pnpm --filter api test && pnpm --filter frontend test",
+        "test:e2e": "pnpm --filter frontend test:e2e",
+        "lint": "pnpm --filter shared lint && pnpm --filter api lint && pnpm --filter frontend lint",
+        "clean": "pnpm --filter shared clean && pnpm --filter api clean && pnpm --filter frontend clean"
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "pnpm": ">=8.0.0"
+    },
+    "packageManager": "pnpm@10.12.4+sha512.5ea8b0deed94ed68691c9bad4c955492705c5eeb8a87ef86bc62c74a26b037b08ff9570f108b2e4dbd1dd1a9186fea925e527f141c648e85af45631074680184"
+}
