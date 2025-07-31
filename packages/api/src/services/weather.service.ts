@@ -12,7 +12,7 @@ export default class WeatherService {
         `https://api.openweathermap.org/data/2.5/weather?zip=${zipcode}&appid=${this.apiKey}`
       );
       const data = await response.json();
-      console.log("DATA", data)
+
       const getWeatherResponse = await getWeatherResponseSchema.safeParseAsync(
         data
       );

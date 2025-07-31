@@ -14,3 +14,8 @@ export const createUserSchema = z.object({
   name: z.string(),
   zipcode: z.string(),
 });
+
+export const updateUserSchema = z.object({
+  name: z.string().optional(),
+  zipcode: z.string().optional(),
+});
