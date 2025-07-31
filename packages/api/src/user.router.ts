@@ -1,11 +1,11 @@
 import express from "express";
 import { ZodError } from "zod";
+import { User } from "@shared/user";
 
 import { env } from "./config/env";
 import UserRepository from "./repositories/user.repository";
 import { createUserSchema, updateUserSchema } from "./schemas";
 import WeatherService from "./services/weather.service";
-import { User } from "@shared/user";
 
 const userRouter: express.Router = express.Router();
 const userRepo = new UserRepository();
