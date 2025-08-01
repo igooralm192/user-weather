@@ -1,7 +1,7 @@
-export type SafeResult<T = any, E = any> =
+export type SafeResult<T = any> =
   | {
       data: T;
     }
   | {
-      error: E;
+      error: { message: string; status: number };
     };

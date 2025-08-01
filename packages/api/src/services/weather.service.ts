@@ -1,4 +1,3 @@
-import { ZodError } from "zod";
 import { Weather } from "@shared/weather";
 import { SafeResult } from "@shared/safe";
 import { z } from "zod";
@@ -17,27 +16,52 @@ export default class WeatherService {
         data
       );
       if (!getWeatherResponse.success) {
-        return { error: getWeatherResponse.error };
+        console.error(getWeatherResponse.error);
+        return {
+          error: {
+            message: "Weather service: Error on parsing get weather response",
+            status: 500,
+          },
+        };
+      }
+
+      if (getWeatherResponse.data.cod !== 200) {
+        const errorMessage =
+          getWeatherResponse.data.message || "Bad request on getting weather";
+        return {
+          error: {
+            message: `Weather service: ${errorMessage}`,
+            status: 400,
+          },
+        };
       }
 
       const weather = await weatherSchema.safeParseAsync(data);
       if (!weather.success) {
-        return { error: weather.error };
+        console.error(weather.error);
+        return {
+          error: {
+            message: "Weather service: Error on parsing weather",
+            status: 500,
+          },
+        };
       }
 
       return { data: weather.data };
     } catch (error) {
-      if (error instanceof ZodError) {
-        return { error: error.errors };
-      }
       console.error(error);
-      return { error: "Internal server error" };
+      return {
+        error: {
+          message: "Weather service: Internal server error",
+          status: 500,
+        },
+      };
     }
   }
 }
 
 const getWeatherResponseSchema = z.object({
-  cod: z.number(),
+  cod: z.coerce.number(),
   message: z.string().optional(),
 });
 
@@ -57,5 +81,5 @@ export const weatherSchema: z.ZodType<Weather> = z.object({
   timezone: z.number(),
   id: z.number(),
   name: z.string(),
-  cod: z.number(),
+  cod: z.coerce.number(),
 });

@@ -11,11 +11,21 @@ export const userSchema: z.ZodType<User> = z.object({
 });
 
 export const createUserSchema = z.object({
-  name: z.string(),
-  zipcode: z.string(),
+  name: z.string({
+    required_error: "Name is required",
+    invalid_type_error: "Name must be a string",
+  }),
+  zipcode: z.string({
+    required_error: "Zipcode is required",
+    invalid_type_error: "Zipcode must be a string",
+  }),
 });
 
 export const updateUserSchema = z.object({
-  name: z.string().optional(),
-  zipcode: z.string().optional(),
+  name: z.string({
+    invalid_type_error: "Name must be a string",
+  }).optional(),
+  zipcode: z.string({
+    invalid_type_error: "Zipcode must be a string",
+  }).optional(),
 });

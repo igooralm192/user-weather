@@ -6,93 +6,151 @@ import { SafeResult } from "@shared/safe";
 
 export default class UserRepository {
   async getAllUsers(): Promise<SafeResult<User[]>> {
-    const snapshot = await db.ref("users").once("value");
+    try {
+      const snapshot = await db.ref("users").once("value");
 
-    const userMap = snapshot.val();
-    if (!userMap) {
-      return { data: [] };
-    }
-    const users: User[] = [];
-    for (const user of Object.values(userMap)) {
-      const { success, data, error } = userSchema.safeParse(user);
-
-      if (!success) {
-        return { error: error.errors };
+      const userMap = snapshot.val();
+      if (!userMap) {
+        return { data: [] };
       }
 
-      users.push(data);
-    }
+      const users: User[] = [];
+      for (const user of Object.values(userMap)) {
+        const { success, data, error } = userSchema.safeParse(user);
 
-    return { data: users };
+        if (!success) {
+          console.error(error);
+          return {
+            error: {
+              message: "User repository: Error on parsing user",
+              status: 500,
+            },
+          };
+        }
+
+        users.push(data);
+      }
+
+      return { data: users };
+    } catch (error) {
+      console.error(error);
+      return {
+        error: {
+          message: "User repository: Internal server error",
+          status: 500,
+        },
+      };
+    }
   }
 
   async getUserById(id: string): Promise<SafeResult<User>> {
-    const userRef = db.ref("users").child(id);
-    const snapshot = await userRef.once("value");
+    try {
+      const userRef = db.ref("users").child(id);
+      const snapshot = await userRef.once("value");
 
-    const user = snapshot.val();
-    if (!user) {
-      return { error: "User not found" };
+      const user = snapshot.val();
+      if (!user) {
+        return { error: { message: "User not found", status: 404 } };
+      }
+
+      const { success, data, error } = await userSchema.safeParseAsync(user);
+
+      if (!success) {
+        console.error(error);
+        return {
+          error: {
+            message: "User repository: Error on parsing user",
+            status: 500,
+          },
+        };
+      }
+
+      return { data: data };
+    } catch (error) {
+      console.error(error);
+      return {
+        error: {
+          message: "User repository: Internal server error",
+          status: 500,
+        },
+      };
     }
-
-    const { success, data, error } = await userSchema.safeParseAsync(user);
-
-    if (!success) {
-      return { error: error.errors };
-    }
-
-    return { data: data };
   }
 
   async createUser(userData: Omit<User, "id">): Promise<SafeResult<User>> {
-    const id = crypto.randomUUID();
+    try {
+      const user = { id: crypto.randomUUID(), ...userData };
 
-    const user = userSchema.parse({
-      id,
-      ...userData,
-    });
+      const userRef = db.ref("users").child(user.id);
+      await userRef.set(user);
 
-    const userRef = db.ref("users").child(id);
-    await userRef.set(user);
-
-    return { data: user };
+      return { data: user };
+    } catch (error) {
+      console.error(error);
+      return {
+        error: {
+          message: "User repository: Internal server error",
+          status: 500,
+        },
+      };
+    }
   }
 
   async updateUser(
     id: string,
     userData: Partial<Omit<User, "id">>
   ): Promise<SafeResult<User>> {
-    const currentUserResponse = await this.getUserById(id);
-    if ("error" in currentUserResponse) {
-      return { error: currentUserResponse.error };
+    try {
+      const currentUserResponse = await this.getUserById(id);
+      if ("error" in currentUserResponse) {
+        return currentUserResponse;
+      }
+
+      const { data: currentUser } = currentUserResponse;
+
+      const updatedUser = {
+        id: id,
+        name: userData.name || currentUser.name,
+        zipcode: userData.zipcode || currentUser.zipcode,
+        latitude: userData.latitude || currentUser.latitude,
+        longitude: userData.longitude || currentUser.longitude,
+        timezone: userData.timezone || currentUser.timezone,
+      };
+
+      const userRef = db.ref("users").child(id);
+      await userRef.set(updatedUser);
+
+      return { data: updatedUser };
+    } catch (error) {
+      console.error(error);
+      return {
+        error: {
+          message: "User repository: Internal server error",
+          status: 500,
+        },
+      };
     }
-
-    const { data: currentUser } = currentUserResponse;
-
-    const updatedUser = userSchema.parse({
-      id: id,
-      name: userData.name || currentUser.name,
-      zipcode: userData.zipcode || currentUser.zipcode,
-      latitude: userData.latitude || currentUser.latitude,
-      longitude: userData.longitude || currentUser.longitude,
-      timezone: userData.timezone || currentUser.timezone,
-    });
-
-    const userRef = db.ref("users").child(id);
-    await userRef.set(updatedUser);
-
-    return { data: updatedUser };
   }
 
   async deleteUser(id: string): Promise<SafeResult<{ id: string }>> {
-    const currentUserResponse = await this.getUserById(id);
-    if ("error" in currentUserResponse) {
-      return { error: currentUserResponse.error };
+    try {
+      const currentUserResponse = await this.getUserById(id);
+      if ("error" in currentUserResponse) {
+        return currentUserResponse;
+      }
+
+      const userRef = db.ref("users").child(id);
+      await userRef.remove();
+
+      return { data: { id } };
+    } catch (error) {
+      console.error(error);
+      return {
+        error: {
+          message: "User repository: Internal server error",
+          status: 500,
+        },
+      };
     }
-
-    const userRef = db.ref("users").child(id);
-    await userRef.remove();
-
-    return { data: { id } };
   }
 }
