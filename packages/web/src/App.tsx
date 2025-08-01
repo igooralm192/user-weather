@@ -1,44 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import '@mantine/core/styles.css';
-import { Button, MantineProvider } from '@mantine/core';
-import { createTheme } from '@mantine/core';
-import { env } from './config/env';
+import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 
-const theme = createTheme({
-  /** Put your mantine theme override here */
+import { MantineProvider } from "@mantine/core";
+import { createTheme } from "@mantine/core";
+import { Notifications, showNotification } from "@mantine/notifications";
+import { Home } from "./components/Home";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
+import { QueryCache } from "@tanstack/react-query";
+import { MutationCache } from "@tanstack/react-query";
+import { IconX } from "@tabler/icons-react";
+
+function handleError(error: Error) {
+  console.error(error);
+  showNotification({
+    title: "Error",
+    message: error.message,
+    color: "red",
+    icon: <IconX />,
+  });
+}
+
+const theme = createTheme({});
+export const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: handleError,
+  }),
+  mutationCache: new MutationCache({
+    onError: handleError,
+  }),
 });
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <MantineProvider theme={theme}>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <Button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </Button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-      <p>Env: {env.VITE_API_URL}</p>
+      <QueryClientProvider client={queryClient}>
+        <Notifications />
+        <Home />
+      </QueryClientProvider>
     </MantineProvider>
-  )
+  );
 }
 
-export default App
+export default App;
