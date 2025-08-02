@@ -1,6 +1,9 @@
 import { Weather } from "@shared/weather";
 import { SafeResult } from "@shared/safe";
-import { z } from "zod";
+import {
+  getWeatherResponseSchema,
+  weatherSchema,
+} from "../schemas/weather.schema";
 
 export default class WeatherService {
   constructor(private apiKey: string) {}
@@ -59,27 +62,3 @@ export default class WeatherService {
     }
   }
 }
-
-const getWeatherResponseSchema = z.object({
-  cod: z.coerce.number(),
-  message: z.string().optional(),
-});
-
-export const weatherSchema: z.ZodType<Weather> = z.object({
-  coord: z.object({
-    lon: z.number(),
-    lat: z.number(),
-  }),
-  weather: z.array(
-    z.object({
-      id: z.number(),
-      main: z.string(),
-      description: z.string(),
-      icon: z.string(),
-    })
-  ),
-  timezone: z.number(),
-  id: z.number(),
-  name: z.string(),
-  cod: z.coerce.number(),
-});

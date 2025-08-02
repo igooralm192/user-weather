@@ -151,6 +151,9 @@ importers:
       '@types/node':
         specifier: ^24.1.0
         version: 24.1.0
+      dotenv:
+        specifier: ^16.6.1
+        version: 16.6.1
 
 packages:
 

@@ -1,10 +1,10 @@
 import express from "express";
 import { User } from "@shared/user";
 
-import { env } from "./config/env";
-import UserRepository from "./repositories/user.repository";
-import { createUserSchema, updateUserSchema } from "./schemas";
-import WeatherService from "./services/weather.service";
+import { env } from "../config/env";
+import UserRepository from "../repositories/user.repository";
+import { createUserSchema, updateUserSchema } from "../schemas/user.schema";
+import WeatherService from "../services/weather.service";
 
 const userRouter: express.Router = express.Router();
 const userRepo = new UserRepository();
@@ -76,11 +76,9 @@ userRouter.put("/:id", async (req, res) => {
     );
 
     if (!success) {
-      return res
-        .status(400)
-        .json({
-          error: `User router: Error validation => ${error.errors?.[0]?.message}`,
-        });
+      return res.status(400).json({
+        error: `User router: Error validation => ${error.errors?.[0]?.message}`,
+      });
     }
 
     const currentUserResponse = await userRepo.getUserById(req.params.id);

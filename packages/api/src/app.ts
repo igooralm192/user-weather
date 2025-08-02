@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
-import userRouter from "./user.router";
+
+import userRouter from "./routers/user.router";
 import { env } from "./config/env";
 import { cleanTestDb } from "./config/firebase";
 

@@ -1,6 +1,6 @@
 import { test, expect, Page } from "@playwright/test";
 
-const apiUrl = "http://localhost:8000/api";
+const apiUrl = process.env.API_URL || 'http://localhost:8000/api';
 
 async function setup(page: Page) {
   // Navigate to the home page before each test

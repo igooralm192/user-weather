@@ -1,8 +1,8 @@
+import { SafeResult } from "@shared/safe";
 import { User } from "@shared/user";
 
-import { db, getRef } from "../config/firebase";
-import { userSchema } from "../schemas";
-import { SafeResult } from "@shared/safe";
+import { getRef } from "../config/firebase";
+import { userSchema } from "../schemas/user.schema";
 
 export default class UserRepository {
   async getAllUsers(): Promise<SafeResult<User[]>> {
