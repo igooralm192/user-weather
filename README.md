@@ -1,4 +1,4 @@
-# User Weather Training Application
+# User Weather Application
 
 A full-stack CRUD application for managing users with weather data integration. Built with Node.js/Express backend, React frontend, and comprehensive end-to-end testing.
 
