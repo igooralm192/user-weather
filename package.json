@@ -4,15 +4,14 @@
   "description": "User Weather CRUD application with Node.js API and React frontend",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"pnpm --filter api dev\" \"pnpm --filter frontend dev\"",
-    "build": "pnpm --filter shared build && pnpm --filter api build && pnpm --filter frontend build",
-    "test": "pnpm --filter shared test && pnpm --filter api test && pnpm --filter frontend test",
-    "test:e2e": "pnpm --filter frontend test:e2e",
-    "lint": "pnpm --filter shared lint && pnpm --filter api lint && pnpm --filter frontend lint",
-    "clean": "pnpm --filter shared clean && pnpm --filter api clean && pnpm --filter frontend clean"
+    "dev": "concurrently \"pnpm --filter api dev\" \"pnpm --filter web dev\"",
+    "dev:e2e": "concurrently \"pnpm --filter api dev:e2e\" \"pnpm --filter web dev\"",
+    "build": "pnpm --filter shared build && pnpm --filter api build && pnpm --filter web build",
+    "test:e2e": "start-server-and-test dev:e2e http://localhost:5173 \"pnpm --filter web-e2e test\""
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "start-server-and-test": "^2.0.12"
   },
   "engines": {
     "node": ">=18.0.0",

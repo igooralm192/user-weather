@@ -93,8 +93,8 @@ export function Users({
     setEditing(null);
     form.reset();
     showNotification({
-      title: "User saved",
-      message: "User saved successfully",
+      title: editing ? "User updated" : "User created",
+      message: `User ${editing ? "updated" : "created"} successfully`,
       color: "green",
       icon: <IconCheck />,
     });
@@ -119,7 +119,7 @@ export function Users({
       window.removeEventListener("user:updated", onUserSaved);
       window.removeEventListener("user:deleted", onUserDeleted);
     };
-  }, []);
+  }, [editing]);
 
   return (
     <>
@@ -142,7 +142,7 @@ export function Users({
               <Table.Th>Actions</Table.Th>
             </Table.Tr>
           </Table.Thead>
-          <Table.Tbody>
+          <Table.Tbody role="tbody">
             {users.map((user) => (
               <Table.Tr key={user.id}>
                 <Table.Td>{user.name}</Table.Td>
@@ -157,6 +157,7 @@ export function Users({
                       loading={loading}
                       variant="subtle"
                       onClick={() => handleEdit(user)}
+                      data-testid="edit-button"
                     >
                       <IconEdit />
                     </ActionIcon>
@@ -166,6 +167,7 @@ export function Users({
                       variant="subtle"
                       color="red"
                       onClick={() => handleDelete(user)}
+                      data-testid="delete-button"
                     >
                       <IconTrash />
                     </ActionIcon>
@@ -181,11 +183,13 @@ export function Users({
         opened={opened}
         onClose={() => setOpened(false)}
         title={editing ? "Edit User" : "Add User"}
+        data-testid="modal"
       >
         <form
           onSubmit={form.onSubmit(
             editing ? handleUpdateSubmit : handleCreateSubmit
           )}
+          data-testid="modal-form"
         >
           <Stack gap={12}>
             <TextInput
@@ -193,6 +197,7 @@ export function Users({
               required
               label="Name"
               placeholder="John Doe"
+              data-testid="name-input"
               {...form.getInputProps("name")}
             />
 
@@ -201,6 +206,7 @@ export function Users({
               required
               label="Zipcode"
               placeholder="12345"
+              data-testid="zipcode-input"
               {...form.getInputProps("zipcode")}
             />
           </Stack>

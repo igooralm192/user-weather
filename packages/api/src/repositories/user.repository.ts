@@ -1,13 +1,13 @@
 import { User } from "@shared/user";
 
-import { db } from "../config/firebase";
+import { db, getRef } from "../config/firebase";
 import { userSchema } from "../schemas";
 import { SafeResult } from "@shared/safe";
 
 export default class UserRepository {
   async getAllUsers(): Promise<SafeResult<User[]>> {
     try {
-      const snapshot = await db.ref("users").once("value");
+      const snapshot = await getRef("users").once("value");
 
       const userMap = snapshot.val();
       if (!userMap) {
@@ -45,7 +45,7 @@ export default class UserRepository {
 
   async getUserById(id: string): Promise<SafeResult<User>> {
     try {
-      const userRef = db.ref("users").child(id);
+      const userRef = getRef("users").child(id);
       const snapshot = await userRef.once("value");
 
       const user = snapshot.val();
@@ -81,7 +81,7 @@ export default class UserRepository {
     try {
       const user = { id: crypto.randomUUID(), ...userData };
 
-      const userRef = db.ref("users").child(user.id);
+      const userRef = getRef("users").child(user.id);
       await userRef.set(user);
 
       return { data: user };
@@ -117,7 +117,7 @@ export default class UserRepository {
         timezone: userData.timezone || currentUser.timezone,
       };
 
-      const userRef = db.ref("users").child(id);
+      const userRef = getRef("users").child(id);
       await userRef.set(updatedUser);
 
       return { data: updatedUser };
@@ -139,7 +139,7 @@ export default class UserRepository {
         return currentUserResponse;
       }
 
-      const userRef = db.ref("users").child(id);
+      const userRef = getRef("users").child(id);
       await userRef.remove();
 
       return { data: { id } };
